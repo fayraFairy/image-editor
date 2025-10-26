@@ -131,10 +131,10 @@ export function BrushTool({ imageUrl, onMaskChange }: BrushToolProps) {
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Badge variant="outline">
-              绘制状态: {isDrawing ? "绘制中" : "就绪"}
+              <span className="max-[370px]:hidden">绘制状态: </span>{isDrawing ? "绘制中" : "就绪"}
             </Badge>
             <Badge variant="secondary">
-              已绘制: {lines.length} 笔
+              <span className="max-[415px]:hidden">已绘制: </span>{lines.length} 笔
             </Badge>
           </div>
           <div className="flex gap-2">
@@ -145,7 +145,7 @@ export function BrushTool({ imageUrl, onMaskChange }: BrushToolProps) {
               className="px-2"
             >
               <RotateCcw className="h-4 w-4" />
-              <span className="max-[545px]:hidden ml-1">清除遮罩</span>
+              <span className="max-[485px]:hidden ml-1">清除遮罩</span>
             </Button>
             <Button
               onClick={generateMask}
@@ -153,7 +153,7 @@ export function BrushTool({ imageUrl, onMaskChange }: BrushToolProps) {
               size="sm"
             >
               <Wand2 className="h-4 w-4" />
-              <span className="max-[485px]:hidden ml-1">生成遮罩</span>
+              <span className="max-[545px]:hidden ml-1">生成遮罩</span>
             </Button>
           </div>
         </div>

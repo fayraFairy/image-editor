@@ -170,7 +170,7 @@ export default function EditorPage() {
                   onClick={handleUploadClick}
                 >
                   <Upload className="h-4 w-4 mr-1" />
-                  上传图片
+                  <span className="max-[445px]:hidden">上传图片</span>
                 </Button>
               </div>
               {outputUrl && (
@@ -220,113 +220,7 @@ export default function EditorPage() {
         </Card>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Left Panel - Controls */}
-          <div className="lg:col-span-1 space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">编辑设置</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {tool === "style" && (
-                  <div className="space-y-2">
-                    <Label htmlFor="style-select">选择风格</Label>
-                    <Select value={styleId || ""} onValueChange={(value) => setStyle(value || null)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="请选择风格" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {STYLE_PRESETS.map((preset) => (
-                          <SelectItem key={preset.id} value={preset.id}>
-                            {preset.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-
-                <div className="space-y-3">
-                  <Label>
-                    强度: <Badge variant="secondary">{Math.round(strength * 100)}%</Badge>
-                  </Label>
-                  <Slider
-                    value={[strength]}
-                    onValueChange={([value]) => setStrength(value)}
-                    max={1}
-                    min={0}
-                    step={0.05}
-                    className="w-full"
-                  />
-                </div>
-
-                {tool === "enhance" && (
-                  <div className="space-y-4">
-                    <h3 className="font-medium">增强选项</h3>
-                    {Object.entries(enhance).map(([key, value]) => (
-                      <div key={key} className="space-y-2">
-                        <Label className="text-sm">
-                          {key}: <Badge variant="outline">{Math.round((value || 0) * 100)}%</Badge>
-                        </Label>
-                        <Slider
-                          value={[value || 0]}
-                          onValueChange={([val]) => setEnhance({ [key]: val })}
-                          max={1}
-                          min={-1}
-                          step={0.1}
-                          className="w-full"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                <Button
-                  onClick={callAPI}
-                  disabled={isProcessing || !imageUrl}
-                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                  size="lg"
-                >
-                  {isProcessing ? (
-                    <>
-                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                      处理中...
-                    </>
-                  ) : (
-                    <>
-                      <Wand2 className="h-4 w-4 mr-2" />
-                      开始处理
-                    </>
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Job Status */}
-            {jobId && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">处理状态</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="text-sm text-muted-foreground">
-                    任务ID: <code className="bg-muted px-1 py-0.5 rounded text-xs">{jobId}</code>
-                  </div>
-                  <Progress value={isProcessing ? 50 : 100} className="w-full" />
-                  <Button
-                    onClick={pollJob}
-                    variant="outline"
-                    size="sm"
-                    className="w-full"
-                  >
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    刷新状态
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-
-          {/* Center - Canvas */}
+          {/* Left Panel - Canvas */}
           <div className="lg:col-span-3">
             <Card>
               <CardHeader>
@@ -428,6 +322,111 @@ export default function EditorPage() {
                       alt="处理结果"
                     />
                   </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+          {/* Right Panel - Controls */}
+          <div className="lg:col-span-1 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">编辑设置</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {tool === "style" && (
+                  <div className="space-y-2">
+                    <Label htmlFor="style-select">选择风格</Label>
+                    <Select value={styleId || ""} onValueChange={(value) => setStyle(value || null)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="请选择风格" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {STYLE_PRESETS.map((preset) => (
+                          <SelectItem key={preset.id} value={preset.id}>
+                            {preset.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                <div className="space-y-3">
+                  <Label>
+                    强度: <Badge variant="secondary">{Math.round(strength * 100)}%</Badge>
+                  </Label>
+                  <Slider
+                    value={[strength]}
+                    onValueChange={([value]) => setStrength(value)}
+                    max={1}
+                    min={0}
+                    step={0.05}
+                    className="w-full"
+                  />
+                </div>
+
+                {tool === "enhance" && (
+                  <div className="space-y-4">
+                    <h3 className="font-medium">增强选项</h3>
+                    {Object.entries(enhance).map(([key, value]) => (
+                      <div key={key} className="space-y-2">
+                        <Label className="text-sm">
+                          {key}: <Badge variant="outline">{Math.round((value || 0) * 100)}%</Badge>
+                        </Label>
+                        <Slider
+                          value={[value || 0]}
+                          onValueChange={([val]) => setEnhance({ [key]: val })}
+                          max={1}
+                          min={-1}
+                          step={0.1}
+                          className="w-full"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <Button
+                  onClick={callAPI}
+                  disabled={isProcessing || !imageUrl}
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                  size="lg"
+                >
+                  {isProcessing ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                      处理中...
+                    </>
+                  ) : (
+                    <>
+                      <Wand2 className="h-4 w-4 mr-2" />
+                      开始处理
+                    </>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Job Status */}
+            {jobId && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">处理状态</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="text-sm text-muted-foreground">
+                    任务ID: <code className="bg-muted px-1 py-0.5 rounded text-xs">{jobId}</code>
+                  </div>
+                  <Progress value={isProcessing ? 50 : 100} className="w-full" />
+                  <Button
+                    onClick={pollJob}
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    刷新状态
+                  </Button>
                 </CardContent>
               </Card>
             )}
