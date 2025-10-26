@@ -19,8 +19,8 @@ export default function Home() {
             </div>
             <Link href="/editor">
               <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                开始编辑
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <span className="ml-1">开始编辑</span>
+                <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
             </Link>
           </div>
@@ -48,8 +48,8 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/editor">
               <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-6">
-                立即开始
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <span className="ml-1">立即开始</span>
+                <ArrowRight className="ml-1 h-5 w-5" />
               </Button>
             </Link>
             <Button variant="outline" size="lg" className="text-lg px-8 py-6">

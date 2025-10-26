@@ -53,7 +53,7 @@ export default function EditorPage() {
     setJob, 
     setOutput 
   } = useEditorStore();
-  const [stageSize] = useState<{ w: number; h: number }>({ w: 800, h: 600 });
+  const [stageSize] = useState<{ w: number; h: number }>({ w: 600, h: 400 });
   const { img } = useLoadImage(imageUrl);
   const stageRef = useRef<Konva.Stage>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -169,7 +169,7 @@ export default function EditorPage() {
                   className="cursor-pointer"
                   onClick={handleUploadClick}
                 >
-                  <Upload className="h-4 w-4 mr-2" />
+                  <Upload className="h-4 w-4 mr-1" />
                   上传图片
                 </Button>
               </div>
@@ -346,22 +346,64 @@ export default function EditorPage() {
                   <BrushTool
                     imageUrl={imageUrl}
                     onMaskChange={setMask}
-                    width={stageSize.w}
-                    height={stageSize.h}
                   />
                 ) : (
-                  <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg overflow-hidden">
+                  <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg">
                     <div className="bg-muted/50 px-4 py-2 text-sm font-medium">
                       原图预览
                     </div>
-                    <div className="bg-neutral-100 dark:bg-neutral-800">
-                      <Stage ref={stageRef} width={stageSize.w} height={stageSize.h}>
+                    <div className="bg-neutral-100 dark:bg-neutral-800 flex justify-center items-center p-4">
+                      <div className="relative" style={{ width: stageSize.w, height: stageSize.h }}>
+                        <Stage 
+                          ref={stageRef} 
+                          width={stageSize.w} 
+                          height={stageSize.h}
+                          style={{ width: stageSize.w, height: stageSize.h }}
+                        >
                         <Layer>
-                          {img && (
-                            <KonvaImage image={img} x={0} y={0} width={stageSize.w} height={stageSize.h} />
-                          )}
+                          {img && (() => {
+                            // 计算保持比例的缩放 - 完整显示图片（contain模式）
+                            // 计算两种缩放方式，选择较小的那个
+                            const scaleByWidth = stageSize.w / img.width;
+                            const scaleByHeight = stageSize.h / img.height;
+                            const scale = Math.min(scaleByWidth, scaleByHeight);
+                            
+                            const displayWidth = img.width * scale;
+                            const displayHeight = img.height * scale;
+                            
+                            // 确保图片完全适合画布，添加安全边距
+                            const safeDisplayWidth = Math.min(displayWidth, stageSize.w - 2);
+                            const safeDisplayHeight = Math.min(displayHeight, stageSize.h - 2);
+                            
+                            const offsetX = (stageSize.w - safeDisplayWidth) / 2;
+                            const offsetY = (stageSize.h - safeDisplayHeight) / 2;
+                            
+                            // 调试信息
+                            console.log('Image debug:', {
+                              originalSize: { w: img.width, h: img.height },
+                              stageSize: { w: stageSize.w, h: stageSize.h },
+                              scale: scale,
+                              scaleByWidth: scaleByWidth,
+                              scaleByHeight: scaleByHeight,
+                              displaySize: { w: displayWidth, h: displayHeight },
+                              offset: { x: offsetX, y: offsetY },
+                              willFitWidth: displayWidth <= stageSize.w,
+                              willFitHeight: displayHeight <= stageSize.h
+                            });
+                            
+                            return (
+                              <KonvaImage 
+                                image={img} 
+                                x={offsetX} 
+                                y={offsetY} 
+                                width={safeDisplayWidth} 
+                                height={safeDisplayHeight} 
+                              />
+                            );
+                          })()}
                         </Layer>
-                      </Stage>
+                        </Stage>
+                      </div>
                     </div>
                   </div>
                 )}
