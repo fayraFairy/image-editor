@@ -35,23 +35,23 @@ function useLoadImage(url: string | null) {
 }
 
 export default function EditorPage() {
-  const { 
-    tool, 
-    imageUrl, 
-    maskDataUrl, 
-    styleId, 
-    strength, 
-    enhance, 
-    jobId, 
-    outputUrl, 
+  const {
+    tool,
+    imageUrl,
+    maskDataUrl,
+    styleId,
+    strength,
+    enhance,
+    jobId,
+    outputUrl,
     setTool,
-    setImageUrl, 
-    setMask, 
+    setImageUrl,
+    setMask,
     setStyle,
     setStrength,
     setEnhance,
-    setJob, 
-    setOutput 
+    setJob,
+    setOutput
   } = useEditorStore();
   const [stageSize] = useState<{ w: number; h: number }>({ w: 600, h: 400 });
   const { img } = useLoadImage(imageUrl);
@@ -73,7 +73,7 @@ export default function EditorPage() {
   const callAPI = async () => {
     if (!imageUrl) return;
     setIsProcessing(true);
-    
+
     try {
       // For MVP, upload is objectURL; convert to dataURL
       const dataUrl = await fetch(imageUrl).then((r) => r.blob()).then((b) => new Promise<string>((res) => { const fr = new FileReader(); fr.onload = () => res(String(fr.result)); fr.readAsDataURL(b); }));
@@ -137,7 +137,7 @@ export default function EditorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+    <div className="min-h-screen min-w-[360px] bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       {/* Header */}
       <header className="border-b bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
@@ -156,16 +156,16 @@ export default function EditorPage() {
             </div>
             <div className="flex items-center gap-3">
               <div className="relative">
-                <Input 
+                <Input
                   ref={fileInputRef}
-                  type="file" 
-                  accept="image/*" 
+                  type="file"
+                  accept="image/*"
                   onChange={onUpload}
                   className="hidden"
                   id="file-upload"
                 />
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="cursor-pointer"
                   onClick={handleUploadClick}
                 >
@@ -174,7 +174,7 @@ export default function EditorPage() {
                 </Button>
               </div>
               {outputUrl && (
-                <Button 
+                <Button
                   className="bg-green-600 hover:bg-green-700"
                   asChild
                 >
@@ -206,11 +206,10 @@ export default function EditorPage() {
                   key={toolType}
                   onClick={() => setTool(toolType as typeof tool)}
                   variant={tool === toolType ? "default" : "outline"}
-                  className={`flex items-center gap-2 ${
-                    tool === toolType 
-                      ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700" 
-                      : ""
-                  }`}
+                  className={`flex items-center gap-2 ${tool === toolType
+                    ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                    : ""
+                    }`}
                 >
                   {getToolIcon(toolType)}
                   {getToolLabel(toolType)}
@@ -354,54 +353,54 @@ export default function EditorPage() {
                     </div>
                     <div className="bg-neutral-100 dark:bg-neutral-800 flex justify-center items-center p-4">
                       <div className="relative" style={{ width: stageSize.w, height: stageSize.h }}>
-                        <Stage 
-                          ref={stageRef} 
-                          width={stageSize.w} 
+                        <Stage
+                          ref={stageRef}
+                          width={stageSize.w}
                           height={stageSize.h}
                           style={{ width: stageSize.w, height: stageSize.h }}
                         >
-                        <Layer>
-                          {img && (() => {
-                            // 计算保持比例的缩放 - 完整显示图片（contain模式）
-                            // 计算两种缩放方式，选择较小的那个
-                            const scaleByWidth = stageSize.w / img.width;
-                            const scaleByHeight = stageSize.h / img.height;
-                            const scale = Math.min(scaleByWidth, scaleByHeight);
-                            
-                            const displayWidth = img.width * scale;
-                            const displayHeight = img.height * scale;
-                            
-                            // 确保图片完全适合画布，添加安全边距
-                            const safeDisplayWidth = Math.min(displayWidth, stageSize.w - 2);
-                            const safeDisplayHeight = Math.min(displayHeight, stageSize.h - 2);
-                            
-                            const offsetX = (stageSize.w - safeDisplayWidth) / 2;
-                            const offsetY = (stageSize.h - safeDisplayHeight) / 2;
-                            
-                            // 调试信息
-                            console.log('Image debug:', {
-                              originalSize: { w: img.width, h: img.height },
-                              stageSize: { w: stageSize.w, h: stageSize.h },
-                              scale: scale,
-                              scaleByWidth: scaleByWidth,
-                              scaleByHeight: scaleByHeight,
-                              displaySize: { w: displayWidth, h: displayHeight },
-                              offset: { x: offsetX, y: offsetY },
-                              willFitWidth: displayWidth <= stageSize.w,
-                              willFitHeight: displayHeight <= stageSize.h
-                            });
-                            
-                            return (
-                              <KonvaImage 
-                                image={img} 
-                                x={offsetX} 
-                                y={offsetY} 
-                                width={safeDisplayWidth} 
-                                height={safeDisplayHeight} 
-                              />
-                            );
-                          })()}
-                        </Layer>
+                          <Layer>
+                            {img && (() => {
+                              // 计算保持比例的缩放 - 完整显示图片（contain模式）
+                              // 计算两种缩放方式，选择较小的那个
+                              const scaleByWidth = stageSize.w / img.width;
+                              const scaleByHeight = stageSize.h / img.height;
+                              const scale = Math.min(scaleByWidth, scaleByHeight);
+
+                              const displayWidth = img.width * scale;
+                              const displayHeight = img.height * scale;
+
+                              // 确保图片完全适合画布，添加安全边距
+                              const safeDisplayWidth = Math.min(displayWidth, stageSize.w - 2);
+                              const safeDisplayHeight = Math.min(displayHeight, stageSize.h - 2);
+
+                              const offsetX = (stageSize.w - safeDisplayWidth) / 2;
+                              const offsetY = (stageSize.h - safeDisplayHeight) / 2;
+
+                              // 调试信息
+                              console.log('Image debug:', {
+                                originalSize: { w: img.width, h: img.height },
+                                stageSize: { w: stageSize.w, h: stageSize.h },
+                                scale: scale,
+                                scaleByWidth: scaleByWidth,
+                                scaleByHeight: scaleByHeight,
+                                displaySize: { w: displayWidth, h: displayHeight },
+                                offset: { x: offsetX, y: offsetY },
+                                willFitWidth: displayWidth <= stageSize.w,
+                                willFitHeight: displayHeight <= stageSize.h
+                              });
+
+                              return (
+                                <KonvaImage
+                                  image={img}
+                                  x={offsetX}
+                                  y={offsetY}
+                                  width={safeDisplayWidth}
+                                  height={safeDisplayHeight}
+                                />
+                              );
+                            })()}
+                          </Layer>
                         </Stage>
                       </div>
                     </div>
@@ -421,12 +420,12 @@ export default function EditorPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="border rounded-lg overflow-hidden">
-                    <Image 
-                      src={outputUrl} 
-                      width={800} 
-                      height={600} 
-                      className="max-w-full h-auto" 
-                      alt="处理结果" 
+                    <Image
+                      src={outputUrl}
+                      width={800}
+                      height={600}
+                      className="max-w-full h-auto"
+                      alt="处理结果"
                     />
                   </div>
                 </CardContent>

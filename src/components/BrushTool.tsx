@@ -32,11 +32,11 @@ export function BrushTool({ imageUrl, onMaskChange }: BrushToolProps) {
         const paddingBottom = parseFloat(computedStyle.paddingBottom);
         console.log(paddingLeft, paddingRight, paddingTop, paddingBottom);
         console.log(rect.width, rect.height);
-    
-    setContainerSize({
-      width: rect.width - paddingLeft - paddingRight,
-      height: rect.height - paddingTop - paddingBottom
-    });
+
+        setContainerSize({
+          width: rect.width - paddingLeft - paddingRight,
+          height: rect.height - paddingTop - paddingBottom
+        });
       }
     };
 
@@ -90,7 +90,7 @@ export function BrushTool({ imageUrl, onMaskChange }: BrushToolProps) {
 
     // Fill with transparent
     ctx.clearRect(0, 0, containerSize.width, containerSize.height);
-    
+
     // Draw white brush strokes
     ctx.strokeStyle = "white";
     ctx.lineWidth = 20;
@@ -128,7 +128,7 @@ export function BrushTool({ imageUrl, onMaskChange }: BrushToolProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Badge variant="outline">
               绘制状态: {isDrawing ? "绘制中" : "就绪"}
@@ -142,56 +142,57 @@ export function BrushTool({ imageUrl, onMaskChange }: BrushToolProps) {
               onClick={clearMask}
               variant="outline"
               size="sm"
+              className="px-2"
             >
-              <RotateCcw className="h-4 w-4 mr-1" />
-              清除遮罩
+              <RotateCcw className="h-4 w-4" />
+              <span className="max-[545px]:hidden ml-1">清除遮罩</span>
             </Button>
             <Button
               onClick={generateMask}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-2"
               size="sm"
             >
-              <Wand2 className="h-4 w-4 mr-1" />
-              生成遮罩
+              <Wand2 className="h-4 w-4" />
+              <span className="max-[485px]:hidden ml-1">生成遮罩</span>
             </Button>
           </div>
         </div>
-        
+
         <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg">
           <div className="bg-muted/50 px-4 py-2 text-sm font-medium">
             绘制区域 (红色为遮罩区域)
           </div>
-          <div 
+          <div
             ref={containerRef}
             className="bg-neutral-100 dark:bg-neutral-800 flex justify-center items-center p-1 rounded-b-lg"
             style={{ minHeight: '400px' }}
           >
-              <Stage
-                ref={stageRef}
-                width={containerSize.width}
-                height={containerSize.height}
-                style={{ width: containerSize.width, height: containerSize.height }}
-                onMouseDown={handleMouseDown}
-                onMousemove={handleMouseMove}
-                onMouseup={handleMouseUp}
-              >
+            <Stage
+              ref={stageRef}
+              width={containerSize.width}
+              height={containerSize.height}
+              style={{ width: containerSize.width, height: containerSize.height }}
+              onMouseDown={handleMouseDown}
+              onMousemove={handleMouseMove}
+              onMouseup={handleMouseUp}
+            >
               <Layer>
                 {img && (() => {
                   // 计算保持比例的缩放 - 完整显示图片（contain模式）
                   const scaleByWidth = containerSize.width / img.width;
                   const scaleByHeight = containerSize.height / img.height;
                   const scale = Math.min(scaleByWidth, scaleByHeight);
-                  
+
                   const displayWidth = img.width * scale;
                   const displayHeight = img.height * scale;
-                  
+
                   // 确保图片完全适合画布，添加安全边距
                   const safeDisplayWidth = Math.min(displayWidth, containerSize.width - 2);
                   const safeDisplayHeight = Math.min(displayHeight, containerSize.height - 2);
-                  
+
                   const offsetX = (containerSize.width - safeDisplayWidth) / 2;
                   const offsetY = (containerSize.height - safeDisplayHeight) / 2;
-                  
+
                   return (
                     <KonvaImage
                       image={img}
@@ -217,7 +218,7 @@ export function BrushTool({ imageUrl, onMaskChange }: BrushToolProps) {
             </Stage>
           </div>
         </div>
-        
+
         <div className="text-sm text-muted-foreground">
           💡 提示：在需要修复的区域绘制红色遮罩，AI将智能填充这些区域
         </div>

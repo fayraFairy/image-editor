@@ -118,5 +118,27 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* 强制禁用缩放 */
+    transform-origin: 0 0;
+    zoom: 1;
+  }
+  
+  /* 确保根元素支持最小宽度和水平滚动 */
+  html {
+    min-width: 360px;
+    overflow-x: auto;
+    /* 强制禁用缩放 */
+    transform-origin: 0 0;
+    zoom: 1;
+  }
+  
+  /* 防止移动端缩放 */
+  @media screen and (max-width: 360px) {
+    html, body {
+      transform: none !important;
+      zoom: 1 !important;
+      -webkit-text-size-adjust: 100% !important;
+      -ms-text-size-adjust: 100% !important;
+    }
   }
 }
