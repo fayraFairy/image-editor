@@ -155,24 +155,6 @@ export default function EditorPage() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="relative">
-                <Input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={onUpload}
-                  className="hidden"
-                  id="file-upload"
-                />
-                <Button
-                  variant="outline"
-                  className="cursor-pointer"
-                  onClick={handleUploadClick}
-                >
-                  <Upload className="h-4 w-4 mr-1" />
-                  <span className="max-[445px]:hidden">上传图片</span>
-                </Button>
-              </div>
               {outputUrl && (
                 <Button
                   className="bg-green-600 hover:bg-green-700"
@@ -328,6 +310,45 @@ export default function EditorPage() {
           </div>
           {/* Right Panel - Controls */}
           <div className="lg:col-span-1 space-y-6">
+            {/* Upload Image Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Upload className="h-5 w-5" />
+                  上传图片
+                </CardTitle>
+                <CardDescription>选择要编辑的图片文件</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="relative">
+                    <Input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={onUpload}
+                      className="hidden"
+                      id="file-upload"
+                    />
+                    <Button
+                      onClick={handleUploadClick}
+                      className="w-full"
+                      variant="outline"
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      选择图片文件
+                    </Button>
+                  </div>
+                  {imageUrl && (
+                    <div className="text-sm text-green-600 dark:text-green-400">
+                      ✓ 图片已上传
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Editing Settings Card */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">编辑设置</CardTitle>
