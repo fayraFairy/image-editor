@@ -164,7 +164,7 @@ export function BrushTool({ imageUrl, onMaskChange }: BrushToolProps) {
           </div>
           <div
             ref={containerRef}
-            className="bg-neutral-100 dark:bg-neutral-800 flex justify-center items-center p-1 rounded-b-lg"
+            className="bg-neutral-100 dark:bg-neutral-800 flex justify-center items-center p-2 rounded-b-lg"
             style={{ minHeight: '400px' }}
           >
             <Stage

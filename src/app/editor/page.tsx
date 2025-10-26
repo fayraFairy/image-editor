@@ -21,16 +21,28 @@ import Link from "next/link";
 function useLoadImage(url: string | null) {
   const [img, setImg] = useState<HTMLImageElement | null>(null);
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
-  useState(() => {
-    if (!url) return;
+
+  useEffect(() => {
+    if (!url) {
+      setImg(null);
+      setSize(null);
+      return;
+    }
+
     const i = new window.Image();
     i.crossOrigin = "anonymous";
     i.onload = () => {
       setImg(i);
       setSize({ w: i.width, h: i.height });
     };
+    i.onerror = () => {
+      console.error('Failed to load image:', url);
+      setImg(null);
+      setSize(null);
+    };
     i.src = url;
-  });
+  }, [url]);
+
   return { img, size };
 }
 
@@ -62,8 +74,29 @@ export default function EditorPage() {
   const onUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (!f) return;
-    const url = URL.createObjectURL(f);
-    setImageUrl(url);
+
+    // 验证文件类型
+    if (!f.type.startsWith('image/')) {
+      alert('请选择图片文件');
+      return;
+    }
+
+    // 验证文件大小（限制10MB）
+    if (f.size > 10 * 1024 * 1024) {
+      alert('文件大小不能超过10MB');
+      return;
+    }
+
+    try {
+      const url = URL.createObjectURL(f);
+      setImageUrl(url);
+
+      // 重置input的value，允许重复选择同一个文件
+      e.target.value = '';
+    } catch (error) {
+      console.error('文件上传失败:', error);
+      alert('文件上传失败，请重试');
+    }
   };
 
   const handleUploadClick = () => {
@@ -222,12 +255,12 @@ export default function EditorPage() {
                     imageUrl={imageUrl}
                     onMaskChange={setMask}
                   />
-                ) : (
+                ) : imageUrl ? (
                   <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg">
                     <div className="bg-muted/50 px-4 py-2 text-sm font-medium">
                       原图预览
                     </div>
-                    <div className="bg-neutral-100 dark:bg-neutral-800 flex justify-center items-center p-4">
+                    <div className="bg-neutral-100 dark:bg-neutral-800 flex justify-center items-center p-2">
                       <div className="relative" style={{ width: stageSize.w, height: stageSize.h }}>
                         <Stage
                           ref={stageRef}
@@ -238,7 +271,6 @@ export default function EditorPage() {
                           <Layer>
                             {img && (() => {
                               // 计算保持比例的缩放 - 完整显示图片（contain模式）
-                              // 计算两种缩放方式，选择较小的那个
                               const scaleByWidth = stageSize.w / img.width;
                               const scaleByHeight = stageSize.h / img.height;
                               const scale = Math.min(scaleByWidth, scaleByHeight);
@@ -253,19 +285,6 @@ export default function EditorPage() {
                               const offsetX = (stageSize.w - safeDisplayWidth) / 2;
                               const offsetY = (stageSize.h - safeDisplayHeight) / 2;
 
-                              // 调试信息
-                              console.log('Image debug:', {
-                                originalSize: { w: img.width, h: img.height },
-                                stageSize: { w: stageSize.w, h: stageSize.h },
-                                scale: scale,
-                                scaleByWidth: scaleByWidth,
-                                scaleByHeight: scaleByHeight,
-                                displaySize: { w: displayWidth, h: displayHeight },
-                                offset: { x: offsetX, y: offsetY },
-                                willFitWidth: displayWidth <= stageSize.w,
-                                willFitHeight: displayHeight <= stageSize.h
-                              });
-
                               return (
                                 <KonvaImage
                                   image={img}
@@ -278,6 +297,18 @@ export default function EditorPage() {
                             })()}
                           </Layer>
                         </Stage>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg">
+                    <div className="bg-muted/50 px-4 py-2 text-sm font-medium">
+                      请先上传图片
+                    </div>
+                    <div className="bg-neutral-100 dark:bg-neutral-800 flex justify-center items-center p-8">
+                      <div className="text-center text-muted-foreground">
+                        <Upload className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                        <p>请先上传要编辑的图片</p>
                       </div>
                     </div>
                   </div>
